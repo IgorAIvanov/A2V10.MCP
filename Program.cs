@@ -10,6 +10,8 @@ using System.IO;
 
 using A2v10.Xaml;
 
+
+
 var builder = Host.CreateApplicationBuilder(args);
 builder.Logging.AddConsole(consoleLogOptions =>
 {
@@ -19,7 +21,12 @@ builder.Logging.AddConsole(consoleLogOptions =>
 builder.Services
     .AddMcpServer()
     .WithStdioServerTransport()
-    .WithToolsFromAssembly();
+    .WithToolsFromAssembly()
+    .WithResourcesFromAssembly();
+
+// Инициализация кэша тегов XAML
+XamlTagHelper.InitializeCache();
+
 await builder.Build().RunAsync();
 
 public class XamlTagInfo
@@ -87,10 +94,27 @@ public static class EchoTool
     public static string Echo(string message) => $"hello {message}";
 }
 
+
 [McpServerToolType]
-public static class XamlTagTool
+public static class XamlTagsTool
 {
-    [McpServerTool, Description("Returns all unique tag names and their attributes from A2v10.ViewEngine.Xaml.")]
+    [McpServerTool,  Description( "Returns all unique tag names from A2v10.ViewEngine.Xaml.")]
+    public static string GetAllTags()
+    {
+        var tags = XamlTagHelper.GetCachedTags();
+        var tagNames = tags.Select(t => t.Tag).ToArray();
+        return JsonSerializer.Serialize(tagNames);
+    }
+
+    [McpServerTool,  Description( "Returns all attributes for the specified tag name from A2v10.ViewEngine.Xaml.")]
+    public static string GetAttributesForTag(string tagName)
+    {
+        var tags = XamlTagHelper.GetCachedTags();
+        var tag = tags.FirstOrDefault(t => t.Tag == tagName);
+        return tag != null ? JsonSerializer.Serialize(tag.Attributes) : JsonSerializer.Serialize(Array.Empty<string>());
+    }
+
+    [McpServerTool,  Description( "Returns all unique tag names and their attributes from A2v10.ViewEngine.Xaml.")]
     public static string GetTagsWithAttributes()
     {
         var tags = XamlTagHelper.GetCachedTags();
