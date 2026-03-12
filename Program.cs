@@ -9,116 +9,31 @@ using System.Xml.Linq;
 using System.IO;
 
 using A2v10.Xaml;
+using A2v10.McpServer;
+using A2V10.McpServer.Tools.Xaml;
 
-
-
-var builder = Host.CreateApplicationBuilder(args);
-builder.Logging.AddConsole(consoleLogOptions =>
+namespace A2v10.McpServer
 {
-    // Configure all logs to go to stderr
-    consoleLogOptions.LogToStandardErrorThreshold = LogLevel.Trace;
-});
-builder.Services
-    .AddMcpServer()
-    .WithStdioServerTransport()
-    .WithToolsFromAssembly()
-    .WithResourcesFromAssembly();
-
-// Инициализация кэша тегов XAML
-XamlTagHelper.InitializeCache();
-
-await builder.Build().RunAsync();
-
-public class XamlTagInfo
-{
-    public string Tag { get; set; } = string.Empty;
-    public string[] Attributes { get; set; } = Array.Empty<string>();
-}
-
-
-
-public static class XamlTagHelper
-{
-    private static XamlTagInfo[]? _cachedTags;
-
-    public static void InitializeCache()
+    internal class Program
     {
-        _cachedTags = GetXamlTagsWithAttributesFromReference();
-    }
-
-    public static XamlTagInfo[] GetCachedTags()
-    {
-        return _cachedTags ?? Array.Empty<XamlTagInfo>();
-    }
-
-    private static XamlTagInfo[] GetXamlTagsWithAttributesFromReference()
-    {
-        var baseType = typeof(XamlElement);
-        var asm = baseType.Assembly;
-
-        var tagTypes = asm.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && baseType.IsAssignableFrom(t) && t.IsPublic)
-            .ToArray();
-
-        var result = new List<XamlTagInfo>();
-        foreach (var type in tagTypes)
+        public static async Task Main(string[] args)
         {
-            string tagName = type.Name;
-            var xamlNameAttr = type.GetCustomAttributes(false)
-                .FirstOrDefault(a => a.GetType().Name == "XamlNameAttribute");
-            if (xamlNameAttr != null)
+            var builder = Host.CreateApplicationBuilder(args);
+            builder.Logging.AddConsole(consoleLogOptions =>
             {
-                var nameProp = xamlNameAttr.GetType().GetProperty("Name");
-                if (nameProp != null)
-                {
-                    string? name = nameProp.GetValue(xamlNameAttr) as string;
-                    if (!string.IsNullOrEmpty(name))
-                        tagName = name;
-                }
-            }
-            var attrs = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.DeclaringType != typeof(object))
-                .Select(p => p.Name)
-                .Distinct()
-                .ToArray();
-            result.Add(new XamlTagInfo { Tag = tagName, Attributes = attrs });
+                // Configure all logs to go to stderr
+                consoleLogOptions.LogToStandardErrorThreshold = LogLevel.Trace;
+            });
+            builder.Services
+                .AddMcpServer()
+                .WithStdioServerTransport()
+                .WithToolsFromAssembly()
+                .WithResourcesFromAssembly();
+
+            // Инициализация кэша тегов XAML
+            XamlTagHelper.InitializeCache();
+
+            await builder.Build().RunAsync();
         }
-        return result.ToArray();
     }
 }
-
-[McpServerToolType]
-public static class EchoTool
-{
-    [McpServerTool, Description("Echoes the message back to the client.")]
-    public static string Echo(string message) => $"hello {message}";
-}
-
-
-[McpServerToolType]
-public static class XamlTagsTool
-{
-    [McpServerTool,  Description( "Returns all unique tag names from A2v10.ViewEngine.Xaml.")]
-    public static string GetAllTags()
-    {
-        var tags = XamlTagHelper.GetCachedTags();
-        var tagNames = tags.Select(t => t.Tag).ToArray();
-        return JsonSerializer.Serialize(tagNames);
-    }
-
-    [McpServerTool,  Description( "Returns all attributes for the specified tag name from A2v10.ViewEngine.Xaml.")]
-    public static string GetAttributesForTag(string tagName)
-    {
-        var tags = XamlTagHelper.GetCachedTags();
-        var tag = tags.FirstOrDefault(t => t.Tag == tagName);
-        return tag != null ? JsonSerializer.Serialize(tag.Attributes) : JsonSerializer.Serialize(Array.Empty<string>());
-    }
-
-    [McpServerTool,  Description( "Returns all unique tag names and their attributes from A2v10.ViewEngine.Xaml.")]
-    public static string GetTagsWithAttributes()
-    {
-        var tags = XamlTagHelper.GetCachedTags();
-        return JsonSerializer.Serialize(tags);
-    }
-}
-
