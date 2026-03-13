@@ -1,15 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ModelContextProtocol.Server;
-using System.ComponentModel;
-using System.Text.Json;
-using System.Reflection;
-using System.Xml.Linq;
-using System.IO;
 
-using A2v10.Xaml;
-using A2v10.McpServer;
 using A2V10.McpServer.Tools.Xaml;
 
 namespace A2v10.McpServer
@@ -24,6 +16,13 @@ namespace A2v10.McpServer
                 // Configure all logs to go to stderr
                 consoleLogOptions.LogToStandardErrorThreshold = LogLevel.Trace;
             });
+
+
+            // Регистрация SQL Server connector в DI
+            builder.Services.AddSingleton<Tools.DBTools.IConnector>(provider =>
+                    new Tools.DBTools.SQLServerConnector()
+                );
+
             builder.Services
                 .AddMcpServer()
                 .WithStdioServerTransport()

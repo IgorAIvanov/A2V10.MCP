@@ -9,13 +9,20 @@ using ModelContextProtocol.Server;
 namespace A2v10.McpServer.Tools.DBTools
 {
     [McpServerToolType]
-    public static class SerchObjects
+    public class SerchObjects
     {
-        [McpServerTool, Description("Executes the specified SQL query and returns the result.")]
-        public static string Execute(string sql)
+        private readonly ISqlServerHelper _sqlHelper;
+
+        public SerchObjects(ISqlServerHelper sqlHelper)
         {
-            // Implementation for executing SQL query
-            return JsonSerializer.Serialize(new { Result = "Query executed successfully" });
+            _sqlHelper = sqlHelper;
+        }
+
+
+        [McpServerTool, Description("Search and list database objects (schemas, tables, columns, procedures, indexes) with pattern matching and token-efficient progressive disclosure")]
+        public async Task<string> Execute(string sql)
+        {
+            return await _sqlHelper.ExecuteQueryAsync(sql);
         }
     }
 }
