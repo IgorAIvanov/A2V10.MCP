@@ -11,9 +11,9 @@ namespace A2v10.McpServer.Tools.DBTools
     [McpServerToolType]
     public class ExecuteSQL 
     {
-        private readonly SQLServerConnector _connector;
+        private readonly IConnector _connector;
 
-        public ExecuteSQL(SQLServerConnector connector)
+        public ExecuteSQL(IConnector connector)
         {
             _connector = connector;
         }

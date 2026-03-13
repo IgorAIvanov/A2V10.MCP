@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using A2V10.McpServer.Tools.Xaml;
-using A2v10.McpServer.Services;
+using A2v10.McpServer.Tools.DBTools;
 
 namespace A2v10.McpServer
 {
@@ -19,19 +19,20 @@ namespace A2v10.McpServer
             });
 
 
-            // Регистрация SQL Server connector в DI
-            builder.Services.AddSingleton<Tools.DBTools.IConnector>(provider =>
-                    new Tools.DBTools.SQLServerConnector()
-                );
+            // Регистрация SQL Server connector с ленивой инициализацией
+            builder.Services.AddSingleton<IConnector>(provider =>
+            {
+                var logger = provider.GetRequiredService<ILogger<LazyConnector>>();
+                var mcpServer = provider.GetRequiredService<ModelContextProtocol.Server.McpServer>();
+                var innerConnector = new SQLServerConnector();
+                return new LazyConnector(logger, mcpServer, innerConnector);
+            });
 
             builder.Services
                 .AddMcpServer()
                 .WithStdioServerTransport()
                 .WithToolsFromAssembly()
                 .WithResourcesFromAssembly();
-
-            // Регистрация сервиса инициализации базы данных
-            builder.Services.AddHostedService<DatabaseInitializationService>();
 
             // Инициализация кэша тегов XAML
             XamlTagHelper.InitializeCache();

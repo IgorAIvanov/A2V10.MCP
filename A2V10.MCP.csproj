@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <Folder Include="Completions\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
