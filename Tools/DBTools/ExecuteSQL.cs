@@ -30,6 +30,21 @@ namespace A2v10.McpServer.Tools.DBTools
             return JsonSerializer.Serialize(result);
         }
 
+        [McpServerTool, Description("Test database connection initialization")]
+        public async Task<string> TestDatabaseInit()
+        {
+            try
+            {
+                var schemas = await _connector.GetSchemasAsync();
+                return $"Success! Found {schemas.Count} schemas: {string.Join(", ", schemas)}";
+            }
+            catch (Exception ex)
+            {
+                return $"Error: {ex.Message}\n\nStack trace: {ex.StackTrace}";
+            }
+        }
+
+
         [McpServerTool, Description("Lists the user's project roots")]
         public static async Task<string> ListProjectRoots(ModelContextProtocol.Server.McpServer server, CancellationToken cancellationToken)
         {
