@@ -80,11 +80,12 @@ namespace A2v10.McpServer.Tools.DBTools
                 if (!validConnectionStrings.Any())
                 {
                     _logger.LogWarning("No valid connection strings found");
+                    var errorStr = string.Join(", ", connectionStrings.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
                     foreach (var error in connectionStrings)
                     {
                         _logger.LogWarning($"Error reading {error.Key}: {error.Value}");
                     }
-                    throw new InvalidOperationException("No valid connection strings found.");
+                    throw new InvalidOperationException("No valid connection strings found. " + string.Join(", ", rootPaths) + ". Errors: " + errorStr);
                 }
 
                 // Используем первую найденную валидную строку подключения
