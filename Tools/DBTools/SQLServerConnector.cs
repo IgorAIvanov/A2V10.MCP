@@ -7,7 +7,7 @@ using Microsoft.Data.SqlClient;
 
 namespace A2v10.McpServer.Tools.DBTools
 {
-    internal class SQLServerConnector : IConnector
+    public class SQLServerConnector : IConnector
     {
         private SqlConnection? _connection;
 
@@ -143,7 +143,7 @@ namespace A2v10.McpServer.Tools.DBTools
                 throw new Exception($"Failed to get schema for table {tableName}: {ex.Message}", ex);
             }
         }
-        }
+        
 
         public async Task<bool> TableExistsAsync(string tableName, string? schema = null)
         {

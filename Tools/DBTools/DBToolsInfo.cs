@@ -131,7 +131,7 @@ public interface IConnector
        // string GetId();
 
         /// <summary> Connect to the database using DSN, with optional init script and database-specific configuration </summary>
-        Task ConnectAsync(String connectionString = null);
+        Task ConnectAsync(string connectionString);
 
         /// <summary> Close the connection </summary>
         Task DisconnectAsync();

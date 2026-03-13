@@ -32,7 +32,11 @@ namespace A2v10.McpServer.Tools.Helpers
                     if (rootElement.TryGetProperty("ConnectionStrings", out var connStringsProp) &&
                         connStringsProp.TryGetProperty("Default", out var defaultConnProp))
                     {
-                        result[appSettingsPath] = defaultConnProp.GetString();
+                        var connectionString = defaultConnProp.GetString();
+                        if (!string.IsNullOrEmpty(connectionString))
+                        {
+                            result[appSettingsPath] = connectionString;
+                        }
                     }
                 }
                 catch (Exception ex)

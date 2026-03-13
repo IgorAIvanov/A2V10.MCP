@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using A2V10.McpServer.Tools.Xaml;
+using A2v10.McpServer.Services;
 
 namespace A2v10.McpServer
 {
@@ -28,6 +29,9 @@ namespace A2v10.McpServer
                 .WithStdioServerTransport()
                 .WithToolsFromAssembly()
                 .WithResourcesFromAssembly();
+
+            // Регистрация сервиса инициализации базы данных
+            builder.Services.AddHostedService<DatabaseInitializationService>();
 
             // Инициализация кэша тегов XAML
             XamlTagHelper.InitializeCache();
