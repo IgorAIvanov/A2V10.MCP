@@ -18,14 +18,36 @@ namespace A2v10.McpServer.Tools.Helpers
             var result = new Dictionary<string, string>();
             foreach (var root in rootPaths)
             {
-                var appSettingsPath = Path.Combine(root, "appSettings.json");
-                if (!File.Exists(appSettingsPath))
+                if (!Directory.Exists(root))
                     continue;
+
+                var appSettingsFiles = Directory.GetFiles(root, "appSettings.json", SearchOption.TopDirectoryOnly);
+
+                if (appSettingsFiles.Length == 0)
+                {
+                    var subdirectories = Directory.GetDirectories(root);
+                    foreach (var subdir in subdirectories)
+                    {
+                        appSettingsFiles = Directory.GetFiles(subdir, "appSettings.json", SearchOption.TopDirectoryOnly);
+                        if (appSettingsFiles.Length > 0)
+                            break;
+                    }
+                }
+
+                if (appSettingsFiles.Length == 0)
+                    continue;
+
+                var appSettingsPath = appSettingsFiles[0];
 
                 try
                 {
                     using var stream = File.OpenRead(appSettingsPath);
-                    using var doc = await JsonDocument.ParseAsync(stream);
+                    var options = new JsonDocumentOptions
+                    {
+                        CommentHandling = JsonCommentHandling.Skip,
+                        AllowTrailingCommas = true
+                    };
+                    using var doc = await JsonDocument.ParseAsync(stream, options);
                     var rootElement = doc.RootElement;
 
                     // Ищем строку соединения по пути "ConnectionStrings" -> "Default"
