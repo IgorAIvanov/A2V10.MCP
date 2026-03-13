@@ -382,7 +382,37 @@ namespace A2v10.McpServer.Tools.DBTools
 
         public async Task<int?> GetTableRowCountAsync(string tableName, string? schema = null)
         {
-            throw new NotImplementedException();
+            if (_connection == null || _connection.State != ConnectionState.Open)
+                throw new InvalidOperationException("Not connected to SQL Server database");
+
+            try
+            {
+                var schemaToUse = string.IsNullOrWhiteSpace(schema) ? "dbo" : schema;
+                using var command = _connection.CreateCommand();
+
+                // Use system tables for quick row count estimate (doesn't require table scan)
+                command.CommandText = @"
+                    SELECT SUM(p.rows) as row_count
+                    FROM sys.partitions p
+                    INNER JOIN sys.tables t ON p.object_id = t.object_id
+                    INNER JOIN sys.schemas s ON t.schema_id = s.schema_id
+                    WHERE t.name = @tableName
+                      AND s.name = @schema
+                      AND p.index_id IN (0, 1)
+                ";
+                command.Parameters.AddWithValue("@tableName", tableName);
+                command.Parameters.AddWithValue("@schema", schemaToUse);
+
+                var result = await command.ExecuteScalarAsync();
+                if (result == null || result == DBNull.Value)
+                    return null;
+
+                return Convert.ToInt32(result);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async Task<string?> GetTableCommentAsync(string tableName, string? schema = null)

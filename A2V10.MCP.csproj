@@ -32,6 +32,7 @@
   <ItemGroup>
     <Folder Include="Completions\" />
     <Folder Include="Services\" />
+    <Folder Include="Tests\" />
   </ItemGroup>
 
 </Project>
