@@ -1,0 +1,11 @@
+{
+    "ConnectionStrings": {
+        "Default": "Server=localhost;Database=r2p;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=False"
+    },
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+        }
+    }
+}
