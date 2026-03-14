@@ -1,5 +1,6 @@
 ﻿// Copyright © 2026 Igor Ivanov. All rights reserved.
 
+using A2v10.McpServer.Configuration;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using System.ComponentModel;
@@ -13,21 +14,22 @@ namespace A2v10.McpServer.Tools.DBTools
     public class ExecuteSQL 
     {
         private readonly IConnector _connector;
-
+        
         public ExecuteSQL(IConnector connector)
         {
             _connector = connector;
         }
 
         [McpServerTool, Description("Executes the specified SQL query and returns the result.")]
-        public async Task<string> Execute(string sql)
+        public async Task<string> Execute(string sql, IServiceOptions options)
         {
-            var options = new ExecuteOptions
+            var executeOptions = new ExecuteOptions
             {
-                ReadOnly = false
+                ReadOnly = options.ReadOnly,
+                MaxRows = options.MaxRows
             }; // или true, если только SELECT
 
-            var result = await _connector.ExecuteSQLAsync(sql, options);
+            var result = await _connector.ExecuteSQLAsync(sql, executeOptions);
             return JsonSerializer.Serialize(result);
         }
 

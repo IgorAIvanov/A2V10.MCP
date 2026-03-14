@@ -20,6 +20,12 @@ namespace A2v10.McpServer
                 consoleLogOptions.LogToStandardErrorThreshold = LogLevel.Trace;
             });
 
+            builder.Services.AddSingleton<IServiceOptions>(new ServiceOptions
+            {
+                ReadOnly = bool.Parse(builder.Configuration["ReadOnly"] ?? "true"),
+                MaxRows = int.Parse(builder.Configuration["MaxRows"] ?? "100")
+            });
+
             // Регистрация сервиса конфигурации
             builder.Services.AddSingleton<IRemouteConfigurationService, RemouteConfigurationService>();
 
