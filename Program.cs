@@ -43,7 +43,7 @@ namespace A2v10.McpServer
                 .AddMcpServer()
                 .WithStdioServerTransport()
                 .WithToolsFromAssembly()
-                .WithResourcesFromAssembly();
+                .WithPromptsFromAssembly();
 
             // Инициализация кэша тегов XAML
             XamlTagHelper.InitializeCache();
