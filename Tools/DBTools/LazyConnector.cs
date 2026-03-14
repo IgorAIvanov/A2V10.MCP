@@ -19,7 +19,7 @@ namespace A2v10.McpServer.Tools.DBTools
         private readonly ILogger<LazyConnector> _logger;
         private readonly ModelContextProtocol.Server.McpServer _mcpServer;
         private readonly IConnector _innerConnector;
-        private readonly IConfigurationService _configurationService;
+        private readonly IRemouteConfigurationService _configurationService;
         private bool _isInitialized;
         private readonly SemaphoreSlim _initializationLock = new(1, 1);
 
@@ -27,7 +27,7 @@ namespace A2v10.McpServer.Tools.DBTools
             ILogger<LazyConnector> logger,
             ModelContextProtocol.Server.McpServer mcpServer,
             IConnector innerConnector,
-            IConfigurationService configurationService)
+            IRemouteConfigurationService configurationService)
         {
             _logger = logger;
             _mcpServer = mcpServer;

@@ -21,16 +21,16 @@ namespace A2v10.McpServer
             });
 
             // Регистрация сервиса конфигурации
-            builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
+            builder.Services.AddSingleton<IRemouteConfigurationService, RemouteConfigurationService>();
 
             // Регистрация SQL Server connector с ленивой инициализацией
             builder.Services.AddSingleton<IConnector>(provider =>
             {
                 var logger = provider.GetRequiredService<ILogger<LazyConnector>>();
                 var mcpServer = provider.GetRequiredService<ModelContextProtocol.Server.McpServer>();
-                var remoteConfigService = provider.GetRequiredService<IConfigurationService>();
+                var remouteConfigService = provider.GetRequiredService<IRemouteConfigurationService>();
                 var innerConnector = new SQLServerConnector();
-                return new LazyConnector(logger, mcpServer, innerConnector, remoteConfigService);
+                return new LazyConnector(logger, mcpServer, innerConnector, remouteConfigService);
             });
 
             builder.Services
