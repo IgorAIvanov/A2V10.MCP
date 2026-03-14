@@ -1,3 +1,4 @@
+// Copyright © 2026 Igor Ivanov. All rights reserved.
 
 using Microsoft.Extensions.Logging;
 using A2v10.McpServer.Tools.Helpers;

@@ -1,4 +1,5 @@
-﻿
+﻿// Copyright © 2026 Igor Ivanov. All rights reserved.
+
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using System.ComponentModel;

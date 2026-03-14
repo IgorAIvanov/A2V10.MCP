@@ -1,4 +1,4 @@
-﻿
+﻿// Copyright © 2026 Igor Ivanov. All rights reserved.
 
 namespace A2v10.McpServer.Tools.DBTools
 {

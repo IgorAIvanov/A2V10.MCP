@@ -1,3 +1,4 @@
+// Copyright © 2026 Igor Ivanov. All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.IO;
