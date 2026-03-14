@@ -27,9 +27,9 @@ namespace A2v10.McpServer
             {
                 var logger = provider.GetRequiredService<ILogger<LazyConnector>>();
                 var mcpServer = provider.GetRequiredService<ModelContextProtocol.Server.McpServer>();
-                var configService = provider.GetRequiredService<IConfigurationService>();
+                var remoteConfigService = provider.GetRequiredService<IConfigurationService>();
                 var innerConnector = new SQLServerConnector();
-                return new LazyConnector(logger, mcpServer, innerConnector, configService);
+                return new LazyConnector(logger, mcpServer, innerConnector, remoteConfigService);
             });
 
             builder.Services

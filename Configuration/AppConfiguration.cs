@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -53,6 +54,59 @@ namespace A2v10.McpServer.Configuration
                 return defaultConn?.ToString();
 
             return connStrings.Values.FirstOrDefault()?.ToString();
+        }
+
+        /// <summary>
+        /// Получает значение настройки по ключу.
+        /// </summary>
+        /// <typeparam name="T">Тип значения</typeparam>
+        /// <param name="key">Ключ настройки</param>
+        /// <param name="defaultValue">Значение по умолчанию</param>
+        /// <returns>Значение настройки или значение по умолчанию</returns>
+        public T? GetValue<T>(string key, T? defaultValue = default)
+        {
+            if (!AdditionalSettings.TryGetValue(key, out var value))
+                return defaultValue;
+
+            if (value is T typedValue)
+                return typedValue;
+
+            try
+            {
+                return (T)Convert.ChangeType(value, typeof(T));
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+
+        /// <summary>
+        /// Получает вложенную настройку из секции конфигурации.
+        /// Например: GetNestedValue("Logging", "LogLevel", "Default")
+        /// </summary>
+        public T? GetNestedValue<T>(string section, string key, T? defaultValue = default)
+        {
+            if (!AdditionalSettings.TryGetValue(section, out var sectionObj))
+                return defaultValue;
+
+            if (sectionObj is not Dictionary<string, object> sectionDict)
+                return defaultValue;
+
+            if (!sectionDict.TryGetValue(key, out var value))
+                return defaultValue;
+
+            if (value is T typedValue)
+                return typedValue;
+
+            try
+            {
+                return (T)Convert.ChangeType(value, typeof(T));
+            }
+            catch
+            {
+                return defaultValue;
+            }
         }
     }
 }
