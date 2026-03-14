@@ -80,7 +80,8 @@ namespace A2v10.McpServer.Tools.DBTools
                     throw new InvalidOperationException($"Failed to load configuration: {config.ErrorMessage}");
                 }
 
-                if (string.IsNullOrEmpty(config.ConnectionString))
+                var connectionString = config.GetConnectionString();
+                if (string.IsNullOrEmpty(connectionString))
                 {
                     throw new InvalidOperationException("No connection string found in configuration.");
                 }
@@ -88,7 +89,7 @@ namespace A2v10.McpServer.Tools.DBTools
                 _logger.LogInformation($"Using connection string from: {config.ConfigFilePath}");
 
                 // Подключаемся к базе данных
-                await _innerConnector.ConnectAsync(config.ConnectionString);
+                await _innerConnector.ConnectAsync(connectionString);
                 _logger.LogInformation("Successfully connected to database");
 
                 _isInitialized = true;
