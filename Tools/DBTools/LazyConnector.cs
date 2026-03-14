@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
-using A2v10.McpServer.Tools.Helpers;
+using A2v10.McpServer.Configuration;
 
 namespace A2v10.McpServer.Tools.DBTools
 {
@@ -18,17 +18,20 @@ namespace A2v10.McpServer.Tools.DBTools
         private readonly ILogger<LazyConnector> _logger;
         private readonly ModelContextProtocol.Server.McpServer _mcpServer;
         private readonly IConnector _innerConnector;
+        private readonly IConfigurationService _configurationService;
         private bool _isInitialized;
         private readonly SemaphoreSlim _initializationLock = new(1, 1);
 
         public LazyConnector(
             ILogger<LazyConnector> logger,
             ModelContextProtocol.Server.McpServer mcpServer,
-            IConnector innerConnector)
+            IConnector innerConnector,
+            IConfigurationService configurationService)
         {
             _logger = logger;
             _mcpServer = mcpServer;
             _innerConnector = innerConnector;
+            _configurationService = configurationService;
             _isInitialized = false;
         }
 
@@ -45,60 +48,47 @@ namespace A2v10.McpServer.Tools.DBTools
 
                 _logger.LogInformation("Starting lazy database initialization...");
 
-                // Получаем roots от MCP клиента
-                var rootsResult = await _mcpServer.RequestRootsAsync(
-                    new ListRootsRequestParams(),
-                    CancellationToken.None);
-
-                if (rootsResult.Roots == null || !rootsResult.Roots.Any())
+                // Инициализируем конфигурацию, если она ещё не загружена
+                if (!_configurationService.IsInitialized)
                 {
-                    _logger.LogWarning("No project roots received from MCP client");
-                    throw new InvalidOperationException("No project roots found. Cannot initialize database connection.");
-                }
+                    // Получаем roots от MCP клиента
+                    var rootsResult = await _mcpServer.RequestRootsAsync(
+                        new ListRootsRequestParams(),
+                        CancellationToken.None);
 
-                // Извлекаем пути из URI
-                var rootPaths = rootsResult.Roots
-                    .Select(r => new Uri(r.Uri).LocalPath)
-                    .ToList();
-
-                _logger.LogInformation($"Found {rootPaths.Count} project root(s): {string.Join(", ", rootPaths)}");
-
-                // Ищем строки подключения в appSettings.json
-                var connectionStrings = await ConfigHelper.FindConnectionStringsAsync(rootPaths);
-
-                if (!connectionStrings.Any())
-                {
-                    _logger.LogWarning("No connection strings found in appSettings.json files");
-                    throw new InvalidOperationException("No connection strings found in appSettings.json files.");
-                }
-
-                // Фильтруем строки подключения, исключая ошибки
-                var validConnectionStrings = connectionStrings
-                    .Where(kvp => !kvp.Value.StartsWith("Ошибка"))
-                    .ToList();
-
-                if (!validConnectionStrings.Any())
-                {
-                    _logger.LogWarning("No valid connection strings found");
-                    var errorStr = string.Join(", ", connectionStrings.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
-                    foreach (var error in connectionStrings)
+                    if (rootsResult.Roots == null || !rootsResult.Roots.Any())
                     {
-                        _logger.LogWarning($"Error reading {error.Key}: {error.Value}");
+                        _logger.LogWarning("No project roots received from MCP client");
+                        throw new InvalidOperationException("No project roots found. Cannot initialize database connection.");
                     }
-                    throw new InvalidOperationException("No valid connection strings found. " + string.Join(", ", rootPaths) + ". Errors: " + errorStr);
+
+                    // Извлекаем пути из URI
+                    var rootPaths = rootsResult.Roots
+                        .Select(r => new Uri(r.Uri).LocalPath)
+                        .ToList();
+
+                    _logger.LogInformation($"Found {rootPaths.Count} project root(s): {string.Join(", ", rootPaths)}");
+
+                    // Инициализируем конфигурацию
+                    await _configurationService.InitializeAsync(rootPaths);
                 }
 
-                // Используем первую найденную валидную строку подключения
-                var firstConnectionString = validConnectionStrings.First();
-                _logger.LogInformation($"Found connection string in: {firstConnectionString.Key}");
-
-                if (validConnectionStrings.Count > 1)
+                // Получаем строку подключения из конфигурации
+                var config = _configurationService.Configuration;
+                if (!config.IsLoaded)
                 {
-                    _logger.LogInformation($"Multiple connection strings found ({validConnectionStrings.Count}), using the first one");
+                    throw new InvalidOperationException($"Failed to load configuration: {config.ErrorMessage}");
                 }
+
+                if (string.IsNullOrEmpty(config.ConnectionString))
+                {
+                    throw new InvalidOperationException("No connection string found in configuration.");
+                }
+
+                _logger.LogInformation($"Using connection string from: {config.ConfigFilePath}");
 
                 // Подключаемся к базе данных
-                await _innerConnector.ConnectAsync(firstConnectionString.Value);
+                await _innerConnector.ConnectAsync(config.ConnectionString);
                 _logger.LogInformation("Successfully connected to database");
 
                 _isInitialized = true;
