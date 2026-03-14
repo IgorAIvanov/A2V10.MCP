@@ -22,8 +22,8 @@ namespace A2v10.McpServer
 
             builder.Services.AddSingleton<IServiceOptions>(new ServiceOptions
             {
-                ReadOnly = bool.Parse(builder.Configuration["ReadOnly"] ?? "true"),
-                MaxRows = int.Parse(builder.Configuration["MaxRows"] ?? "100")
+                ReadOnly = bool.Parse(builder.Configuration["readOnly"] ?? "true"),
+                MaxRows = int.Parse(builder.Configuration["maxRows"] ?? "100")
             });
 
             // Регистрация сервиса конфигурации
