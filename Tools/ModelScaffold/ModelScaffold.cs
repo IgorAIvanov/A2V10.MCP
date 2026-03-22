@@ -1,11 +1,15 @@
-﻿using A2v10.McpServer.Configuration;
+﻿// Copyright © 2026 Igor Ivanov. All rights reserved.
+using A2v10.McpServer.Configuration;
 using A2v10.Xaml;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Text.Json;
 
 namespace A2V10.MCP.Tools.ModelBuilder
 {
@@ -23,10 +27,10 @@ namespace A2V10.MCP.Tools.ModelBuilder
 
 
         [McpServerToolType]
-    internal class ModelBuilder
+    internal class ModelScaffold
     {
         private readonly ILogger _logger;
-        public ModelBuilder(ILogger<ModelBuilder> logger)
+        public ModelScaffold(ILogger<ModelScaffold> logger)
         {
             _logger = logger;
         }
@@ -52,9 +56,11 @@ namespace A2V10.MCP.Tools.ModelBuilder
                 }
             }
 
+            var result = "";
+            //if (execOptions.Contains(GenerateOptions.ModelJson)) 
+            { result = result + GetModelJson(modelDefinition) + Environment.NewLine; }
 
-
-                return "Not implemented yet";
+            return result;
         }
 
         public string GetModelJson(string modelDefinition)
@@ -64,11 +70,45 @@ namespace A2V10.MCP.Tools.ModelBuilder
             _logger.LogInformation("Generating model JSON from definition: {ModelDefinition}", modelDefinition);
             // load ./Resources/model.json as template and replace placeholders with values from modelDefinition
             var template = File.ReadAllText("./Resources/model.json");
-            var path = "uncnoun";
+           
+            var options = new JsonDocumentOptions
+            {
+                CommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true
+            };
+            using var doc =  JsonDocument.Parse(modelDefinition, options);
+            var rootElement = doc.RootElement;
+            var keys = new Dictionary<string, string>();
+            keys.Add("SchemaName", rootElement.GetProperty("schema").GetString() ?? string.Empty);
+            keys.Add("ModelName", rootElement.GetProperty("name").GetString() ?? string.Empty);
 
+            var result = ReplaceTemplatePlaceholders(template, keys);
+            result = "{\"fileName\": \"model.json\", \"content\": " + result + "}";
 
+            return result;
+        }
 
-            return $"{{ \"model\": \"Generated from {modelDefinition}\" }}";
+        private static string ReplaceTemplatePlaceholders(string template, Dictionary<string, string> replacements)
+        {
+            if (string.IsNullOrEmpty(template))
+                return template;
+
+            if (replacements == null || replacements.Count == 0)
+                return template;
+
+            var result = new StringBuilder(template);
+           
+
+            foreach (var kvp in replacements)
+            {
+                var placeholder = $"$({kvp.Key})";
+                result.Replace(placeholder, kvp.Value);
+            }
+            
+            
+            
+
+            return result.ToString();
         }
     }
 }

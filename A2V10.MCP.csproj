@@ -36,7 +36,6 @@
     <Folder Include="Resources\SQL\" />
     <Folder Include="Services\" />
     <Folder Include="Tests\" />
-    <Folder Include="Tools\ModelBuilder\Resources\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using ModelContextProtocol.Server;
+﻿// Copyright © 2026 Igor Ivanov. All rights reserved.
+using ModelContextProtocol.Server;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
