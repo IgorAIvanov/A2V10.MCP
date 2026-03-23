@@ -117,18 +117,20 @@ namespace A2V10.McpServer.Tools.Xaml
             }
 
             var tags = XamlTagHelper.GetCachedTags();
-            var tagMap = tags.ToDictionary(t => t.Tag, StringComparer.OrdinalIgnoreCase);
+            var tagMap = tags
+                .GroupBy(t => t.Tag, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
 
             foreach (var element in document.Root.DescendantsAndSelf())
             {
                 var tagName = element.Name.LocalName;
-                if (!tagMap.TryGetValue(tagName, out var tagInfo))
+                if (!IsValidTag(tagName, tagMap, out var tagInfo))
                 {
                     errors.Add($"Unknown tag '{tagName}'{GetLocationSuffix(element)}.");
                     continue;
                 }
 
-                var knownAttributes = new HashSet<string>(tagInfo.Attributes, StringComparer.OrdinalIgnoreCase);
+                var knownAttributes = new HashSet<string>(tagInfo.Attributes ?? Array.Empty<string>(), StringComparer.OrdinalIgnoreCase);
                 foreach (var attribute in element.Attributes().Where(a => !a.IsNamespaceDeclaration))
                 {
                     var attributeName = attribute.Name.LocalName;
@@ -142,6 +144,40 @@ namespace A2V10.McpServer.Tools.Xaml
                 IsValid = errors.Count == 0,
                 Errors = errors
             });
+        }
+
+        private static bool IsValidTag(string tagName, Dictionary<string, XamlTagInfo> tagMap, out XamlTagInfo? tagInfo)
+        {
+            tagInfo = null;
+
+            if (tagMap.TryGetValue(tagName, out var foundTag))
+            {
+                tagInfo = foundTag;
+                return true;
+            }
+
+            if (tagName.Contains('.'))
+            {
+                var parts = tagName.Split('.');
+                bool allPartsValid = true;
+
+                foreach (var part in parts)
+                {
+                    if (!tagMap.ContainsKey(part))
+                    {
+                        allPartsValid = false;
+                        break;
+                    }
+                }
+
+                if (allPartsValid && parts.Length > 0)
+                {
+                    tagInfo = tagMap[parts[^1]];
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static string GetLocationSuffix(XObject node)

@@ -54,7 +54,31 @@ namespace A2V10.McpServer.Tools.Xaml
                     .ToArray();
                 result.Add(new XamlTagInfo { Tag = tagName, Attributes = attrs });
             }
+
+            result.AddRange(GetAdditionalValidTags());
             return result.ToArray();
+        }
+
+        private static XamlTagInfo[] GetAdditionalValidTags()
+        {
+            return
+            [
+                new XamlTagInfo
+                {
+                    Tag = "Filter",
+                    Attributes = ["For", "Operator", "Value", "DataType"]
+                },
+                new XamlTagInfo
+                {
+                    Tag = "FilterDescription",
+                    Attributes = ["Property", "Label", "DataType", "Operator"]
+                },
+                new XamlTagInfo
+                {
+                    Tag = "DropDown",
+                    Attributes = ["Label", "ItemsSource", "DisplayProperty", "ValueProperty", "Value"]
+                }
+            ];
         }
     }
 }
