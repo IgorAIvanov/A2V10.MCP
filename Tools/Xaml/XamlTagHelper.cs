@@ -66,17 +66,17 @@ namespace A2V10.McpServer.Tools.Xaml
                 new XamlTagInfo
                 {
                     Tag = "Filter",
-                    Attributes = ["For", "Operator", "Value", "DataType"]
+                    Attributes = ["Property", "DataType"]
                 },
                 new XamlTagInfo
                 {
                     Tag = "FilterDescription",
-                    Attributes = ["Property", "Label", "DataType", "Operator"]
+                    Attributes = []
                 },
                 new XamlTagInfo
                 {
                     Tag = "DropDown",
-                    Attributes = ["Label", "ItemsSource", "DisplayProperty", "ValueProperty", "Value"]
+                    Attributes = []
                 }
             ];
         }
