@@ -137,7 +137,7 @@ public class CodePrompts
 }
 ```
 
-### Completions with Smpling
+### Completions with Sampling
 ```csharp
 builder.Services.AddMcpServer()
     .WithHttpTransport()

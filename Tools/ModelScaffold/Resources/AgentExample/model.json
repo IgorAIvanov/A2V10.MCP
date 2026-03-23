@@ -1,0 +1,93 @@
+﻿{
+	"$schema": "../../@schemas/model-json-schema.json#",
+	"schema": "cat",
+	"model": "Agent",
+	"actions": {
+		"index": {
+			"index": true,
+			"template": "index.template",
+			"view": "index.view"
+		},
+		"show": {
+			"model": "Agent.Show",
+			"template": "show.template",
+			"view": "show.view"
+		},
+		"browse": {
+			"index": true,
+			"template": "index.template",
+			"view": "browse.dialog"
+		}
+	},
+	"dialogs": {
+		"edit": {
+			"template": "edit.template",
+			"view": "edit.dialog",
+			"signal": true
+		},
+		"editFolder": {
+			"model": "Agent.Folder",
+			"template": "editfolder.template",
+			"view": "editfolder.dialog"
+		},
+		"browse": {
+			"index": true,
+			"template": "index.template",
+			"view": "browse.dialog"
+		},
+		"browseFolder": {
+			"index": true,
+			"template": "index.template",
+			"view": "../_common/browsefolder.dialog",
+			"parameters": {
+				"StdFolders": false
+			}
+		}
+	},
+	"commands": {
+		"fetch": {
+			"type": "sql",
+			"procedure": "Agent.Fetch"
+		},
+		"deleteFolder": {
+			"type": "sql",
+			"procedure": "Agent.Folder.Delete"
+		},
+		"moveToFolder": {
+			"type": "sql",
+			"procedure": "Agent.MoveToFolder"
+		},
+		"setNameEn": {
+			"type": "clr",
+			"clrType": "clr-type:R2P.Integrations.Agent.SetNameEnHandler;assembly=R2P.Integrations"
+		},
+		"setAsEmployee": {
+			"type": "sql",
+			"procedure": "Agent.SetAsEmployee"
+		},
+		"deleteBankAccount": {
+			"type": "sql",
+			"procedure": "AgentBankAccount.Delete"
+		},
+		"deleteContact": {
+			"type": "sql",
+			"procedure": "AgentContact.Delete"
+		},
+		"deleteContract": {
+			"type": "sql",
+			"procedure": "Contract.Delete"
+		},
+		"checkDuplicate": {
+			"type": "sql",
+			"procedure": "Agent.Code.CheckDuplicate"
+		},
+		"translit": {
+			"type": "clr",
+			"clrType": "clr-type:R2P.Integrations.Agent.TranslitEnHandler;assembly=R2P.Integrations"
+		},
+		"findbycode": {
+			"type": "sql",
+			"procedure": "Agent.FindByCode"
+		}
+	}
+}

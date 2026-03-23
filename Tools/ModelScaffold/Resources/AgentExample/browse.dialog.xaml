@@ -1,0 +1,51 @@
+﻿<!-- Browse Donor -->
+<Dialog xmlns="clr-namespace:A2v10.Xaml;assembly=A2v10.Xaml" 
+		Title="@[Browse.Agent]" Overflow="True" Width="75rem" Height="Auto"
+		 Components="{Components ../_components/catalog.tree}">
+	<Dialog.Buttons>
+		<Button Content="@[Select]" Command="{BindCmd Select, Argument={Bind Folders.Selected(Agents)}}" Style="Primary"/>
+		<Button Content="@[Cancel]" Command="{BindCmd Close}"/>
+	</Dialog.Buttons>
+	<Dialog.CollectionView>
+		<CollectionView ItemsSource="{Bind Folders.Selected(Agents)}" RunAt="Server">
+			<CollectionView.Filter>
+				<FilterDescription>
+					<FilterItem Property="Fragment" DataType="String"/>
+					<FilterItem Property="Tags" DataType="String"/>
+				</FilterDescription>
+			</CollectionView.Filter>
+		</CollectionView>
+	</Dialog.CollectionView>
+	<Grid Rows="Auto,1*,Auto" Height="40rem" AlignItems="Stretch">
+		<Toolbar>
+            <Button Icon="Plus" Content="@[Create]"
+		Command="{BindCmd Dialog, Action=Show, Permission=CanCreate, Argument={Bind Parent.ItemsSource}, Url='/catalog/agent/edit',
+		Data={Bind Root.$CreateArg}}"/>
+            <Separator/>
+            <Button Icon="Reload" Command="{BindCmd Reload}"/>
+			<ToolbarAligner />
+			<TextBox Placeholder="@[Search]" Value="{Bind Parent.Filter.Fragment}" Width="20rem"
+						 ShowClear="True" ShowSearch="True" TabIndex="1"/>
+		</Toolbar>
+		<DataGrid Grid.Row="2" ItemsSource="{Bind Parent.ItemsSource}"
+					FixedHeader="True" Sort="True"
+					DoubleClick="{BindCmd Select, Argument={Bind Folders.Selected(Agents)}}">
+			<DataGridColumn Header="@[Name]" Content="{Bind Name}" LineClamp="2"/>
+			<DataGridColumn Header="@[NameEN]" Content="{Bind NameEN}" LineClamp="2"/>
+            <DataGridColumn Header="@[CodeUA]" Content="{Bind CodeUA}" LineClamp="2"/>
+            <DataGridColumn Header="@[Memo]" Content="{Bind Memo}" LineClamp="2"/>
+		</DataGrid>
+		<Pager Grid.Row="3" Source="{Bind Parent.Pager}"/>
+	</Grid>
+	<Dialog.Taskpad>
+		<Taskpad XamlStyle="{StyleResource DialogTaskpad}">
+			<Grid Height="100%" Rows="1*" AlignItems="Stretch" Padding="0">
+				<Panel Header="@[Grouping]" Collapsible="True" CssClass="panel-grouping">
+					<Component Name="ToolbarGroupingSimple"/>
+					<Component Name="TreeViewGrouping"/>
+				</Panel>
+			</Grid>
+		</Taskpad>
+	</Dialog.Taskpad>
+</Dialog>
+
