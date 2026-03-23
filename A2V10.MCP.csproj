@@ -36,7 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Tools\ModelScaffold\Resources\AgentExample\agent.meta.json" />
     <None Remove="Tools\ModelScaffold\Resources\AgentExample\agent.sql" />
     <None Remove="Tools\ModelScaffold\Resources\AgentExample\browse.dialog.xaml" />
     <None Remove="Tools\ModelScaffold\Resources\AgentExample\edit.dialog.xaml" />
@@ -51,7 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Tools\ModelScaffold\Resources\AgentExample\agent.meta.json">
+    <Content Include="Tools\ModelScaffold\Resources\AgentExample\person.meta.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Tools\ModelScaffold\Resources\AgentExample\agent.sql">

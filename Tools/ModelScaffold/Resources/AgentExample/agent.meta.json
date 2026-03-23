@@ -1,72 +1,287 @@
 {
   "schema": "cat",
-  "name": "Person",
-  "description": "A person (alive, dead, undead, or fictional).",
+  "name": "Agent",
+  "description": "An agent (example metadata generated from agentSQLLoadResult.json).",
   "properties": [
     {
       "name": "Id",
       "role": "PrimaryKey",
       "type": "Identifier",
-      "description": "The person's unique identifier."
-
+      "description": "The agent's unique identifier."
     },
     {
       "name": "Name",
       "type": "string",
       "title": "Name",
-      "description": "The person's name."
+      "description": "The agent's name."
     },
     {
-      "name": "Age",
-      "type": "integer",
-      "title": "Age",
-      "description": "The person's age."
-    },
-    {
-      "name": "Email",
+      "name": "NameEN",
       "type": "string",
-      "title": "Email",
-      "description": "The person's email address."
+      "title": "Name EN",
+      "description": "The agent's name in English."
     },
     {
-      "name": "User",
-      "type": "A2V10:User",
-      "title": "User",
-      "description": "The user associated with the person."
+      "name": "CodeUA",
+      "type": "string",
+      "title": "Code UA",
+      "description": "The agent's code (UA)."
+    },
+    {
+      "name": "Memo",
+      "type": "string",
+      "title": "Memo",
+      "description": "Notes."
+    },
+    {
+      "name": "ActedName",
+      "type": "string",
+      "title": "Acted Name",
+      "description": "Acted name."
+    },
+    {
+      "name": "PersonId",
+      "type": "Identifier",
+      "title": "Person",
+      "description": "Associated person identifier."
+    },
+    {
+      "name": "$Title",
+      "type": "integer",
+      "description": "Title (runtime field)."
+    },
+    {
+      "name": "$CanSetAsEmpl",
+      "type": "boolean",
+      "description": "Can be set as employee (runtime field)."
     }
   ],
   "Children": [
     {
-      "name": "PersonContacts",
+      "name": "Owner",
       "schema": "cat",
-      "description": "The person's contacts.",
+      "description": "The owner.",
+      "properties": [
+        {
+          "name": "Id",
+          "type": "Identifier",
+          "description": "Owner identifier."
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "description": "Owner name."
+        },
+        {
+          "name": "Email",
+          "type": "string",
+          "description": "Owner email."
+        }
+      ]
+    },
+    {
+      "name": "Folder",
+      "schema": "cat",
+      "description": "The folder.",
+      "properties": [
+        {
+          "name": "Id",
+          "type": "Identifier",
+          "description": "Folder identifier."
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "description": "Folder name."
+        }
+      ]
+    },
+    {
+      "name": "Contacts",
+      "schema": "cat",
+      "description": "Agent contacts.",
       "properties": [
         {
           "name": "Id",
           "role": "PrimaryKey",
           "type": "Identifier",
-          "description": "The contact's unique identifier."
+          "description": "Contact identifier."
         },
         {
-          "name": "PersonId",
-          "type": "Identifier",
-          "description": "The person's unique identifier."
-        },
-        {
-          "name": "ContactType",
+          "name": "Name",
           "type": "string",
-          "title": "Contact Type",
-          "description": "The type of contact (e.g., phone, email, social media)."
+          "description": "Contact name."
         },
         {
-          "name": "ContactValue",
+          "name": "NameEN",
           "type": "string",
-          "title": "Contact Value",
-          "description": "The value of the contact (e.g., phone number, email address, social media handle)."
+          "description": "Contact name in English."
+        },
+        {
+          "name": "Position",
+          "type": "string",
+          "description": "Position."
+        },
+        {
+          "name": "Email",
+          "type": "string",
+          "description": "Email."
+        },
+        {
+          "name": "Phone",
+          "type": "string",
+          "description": "Phone."
+        },
+        {
+          "name": "Address",
+          "type": "string",
+          "description": "Address."
+        },
+        {
+          "name": "AdressEN",
+          "type": "string",
+          "description": "Address in English."
+        },
+        {
+          "name": "FactAddress",
+          "type": "string",
+          "description": "Actual address."
+        },
+        {
+          "name": "FactAddressEN",
+          "type": "string",
+          "description": "Actual address in English."
         }
       ]
+    },
+    {
+      "name": "BankAccounts",
+      "schema": "cat",
+      "description": "Agent bank accounts.",
+      "properties": [
+        {
+          "name": "Id",
+          "role": "PrimaryKey",
+          "type": "Identifier",
+          "description": "Bank account identifier."
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "description": "Bank account display name."
+        },
+        {
+          "name": "NameEN",
+          "type": "string",
+          "description": "Bank account display name in English."
+        },
+        {
+          "name": "Memo",
+          "type": "string",
+          "description": "Notes."
+        },
+        {
+          "name": "IBAN",
+          "type": "string",
+          "description": "IBAN."
+        }
+      ],
+      "Children": [
+        {
+          "name": "Currency",
+          "schema": "cat",
+          "description": "Currency.",
+          "properties": [
+            {
+              "name": "Id",
+              "type": "Identifier",
+              "description": "Currency identifier."
+            },
+            {
+              "name": "Name",
+              "type": "string",
+              "description": "Currency name."
+            },
+            {
+              "name": "Alpha3",
+              "type": "string",
+              "description": "ISO 4217 alpha-3 code."
+            }
+          ]
+        },
+        {
+          "name": "Bank",
+          "schema": "cat",
+          "description": "Bank.",
+          "properties": [
+            {
+              "name": "Id",
+              "type": "Identifier",
+              "description": "Bank identifier."
+            },
+            {
+              "name": "Name",
+              "type": "string",
+              "description": "Bank name."
+            },
+            {
+              "name": "Code",
+              "type": "string",
+              "description": "Bank code."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Contracts",
+      "schema": "cat",
+      "description": "Contracts.",
+      "properties": [
+        {
+          "name": "Id",
+          "role": "PrimaryKey",
+          "type": "Identifier",
+          "description": "Contract identifier."
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "description": "Contract name."
+        },
+        {
+          "name": "NameEN",
+          "type": "string",
+          "description": "Contract name in English."
+        },
+        {
+          "name": "Memo",
+          "type": "string",
+          "description": "Notes."
+        },
+        {
+          "name": "SNo",
+          "type": "string",
+          "description": "Serial/number."
+        },
+        {
+          "name": "Date",
+          "type": "DateTime",
+          "description": "Date."
+        }
+      ]
+    },
+    {
+      "name": "Names",
+      "schema": "cat",
+      "description": "Names.",
+      "properties": []
+    },
+    {
+      "name": "Folders",
+      "schema": "cat",
+      "description": "Folders.",
+      "properties": []
     }
   ]
 }
-  
-  
