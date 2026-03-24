@@ -13,6 +13,14 @@ namespace A2V10.MCP.Resources.ModelCreate
         [Description("Step-by-step guide for creating a new A2V10 model.")]
         public static string GetModelCreationGuide() => ReadTemplate("create-model-step-by-step.md");
 
+        [McpServerResource(UriTemplate = "docs://model-create/sql-dataset-to-json", Name = "A2V10 SQL DataSet to JSON", MimeType = "text/markdown")]
+        [Description("Explains how multiple SQL result sets (A2V10 DataSet markup) are transformed into the JSON model.")]
+        public static string GetSqlDataSetToJsonGuide() => ReadTemplate("a2v10-sql-dataset-to-json.md");
+
+        [McpServerResource(UriTemplate = "docs://model-create/json-to-sql-update", Name = "A2V10 JSON to SQL Update", MimeType = "text/markdown")]
+        [Description("Explains how JSON submitted by the client is mapped to SQL TVPs using ...Metadata and ...Update stored procedures.")]
+        public static string GetJsonToSqlUpdateGuide() => ReadTemplate("a2v10-json-to-sql-update.md");
+
         [McpServerResource(UriTemplate = "template://model-scaffold/model-json", Name = "ModelScaffold Model JSON Template and Schema", MimeType = "application/json")]
         [Description("Returns the A2V10 model.json template and schema for model scaffold.")]
         public static string GetModelJsonTemplate()
