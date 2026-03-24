@@ -33,13 +33,21 @@ namespace A2V10.MCP.Resources.ModelCreate
             return System.Text.Json.JsonSerializer.Serialize(templates);
         }
 
-        [McpServerResource(UriTemplate = "template://model-scaffold/model-meta-json", Name = "ModelScaffold Model Metadata Example", MimeType = "application/json")]
-        [Description("Returns the A2V10 model.meta.json template for model scaffold.")]
-        public static string GetModelMetaJsonTemplate() => ReadTemplate("model.meta.json", "AgentExample");
+        [McpServerResource(UriTemplate = "template://model-scaffold/agent-schema-json", Name = "ModelScaffold Agent Schema JSON", MimeType = "application/json")]
+        [Description("Returns the A2V10 agent schema.json template for model scaffold.")]
+        public static string GetAgentSchemaJsonTemplate() => ReadTemplate("agent.schema.json", "AgentExample");
+
+        [McpServerResource(UriTemplate = "template://model-scaffold/agent-meta-example", Name = "ModelScaffold Agent Metadata Example", MimeType = "application/json")]
+        [Description("Returns the A2V10 agent meta.json example (generated model metadata).")]
+        public static string GetAgentMetaExampleTemplate() => ReadTemplate("agent.meta.json", "AgentExample");
 
         [McpServerResource(UriTemplate = "template://model-scaffold/model-sql", Name = "ModelScaffold Model SQL Example", MimeType = "application/sql")]
         [Description("Returns the A2V10 model.sql template for model scaffold.")]
         public static string GetModelSqlTemplate() => ReadTemplate("model.sql", "AgentExample");
+
+        [McpServerResource(UriTemplate = "template://model-scaffold/agent-sql-example", Name = "ModelScaffold Agent SQL Example", MimeType = "application/sql")]
+        [Description("Returns the A2V10 agent SQL example script (stored procedures, table types, etc.).")]
+        public static string GetAgentSqlExampleTemplate() => ReadTemplate("agent.sql", "AgentExample");
 
 
         [McpServerResource(UriTemplate = "template://model-scaffold/index-view", Name = "ModelScaffold Index View XAML", MimeType = "application/xml")]
