@@ -13,6 +13,11 @@ namespace A2V10.McpServer.Tools.Xaml
     [McpServerToolType]
     public static class XamlTagsTool
     {
+        private static readonly Dictionary<string, HashSet<string>> AttachedAttributes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Grid"] = new(["Col", "Row", "ColSpan", "RowSpan", "VAlign"], StringComparer.OrdinalIgnoreCase)
+        };
+
         [McpServerTool, Description("Returns all unique tag names from A2v10.ViewEngine.Xaml.")]
         public static string GetAllTags()
         {
@@ -64,8 +69,11 @@ namespace A2V10.McpServer.Tools.Xaml
         public static string ValidateElement(string tagName, string[] attributes)
         {
             var errors = new List<string>();
-            var tag = XamlTagHelper.GetCachedTags()
-                .FirstOrDefault(t => string.Equals(t.Tag, tagName, StringComparison.OrdinalIgnoreCase));
+            var tags = XamlTagHelper.GetCachedTags();
+            var tagMap = tags
+                .GroupBy(t => t.Tag, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+            var tag = tags.FirstOrDefault(t => string.Equals(t.Tag, tagName, StringComparison.OrdinalIgnoreCase));
 
             if (tag == null)
             {
@@ -76,7 +84,7 @@ namespace A2V10.McpServer.Tools.Xaml
                 var known = new HashSet<string>(tag.Attributes, StringComparer.OrdinalIgnoreCase);
                 foreach (var attr in attributes ?? Array.Empty<string>())
                 {
-                    if (!known.Contains(attr))
+                    if (!IsValidAttribute(attr, known, tagMap))
                         errors.Add($"Unknown attribute '{attr}' for tag '{tagName}'.");
                 }
             }
@@ -134,7 +142,7 @@ namespace A2V10.McpServer.Tools.Xaml
                 foreach (var attribute in element.Attributes().Where(a => !a.IsNamespaceDeclaration))
                 {
                     var attributeName = attribute.Name.LocalName;
-                    if (!knownAttributes.Contains(attributeName))
+                    if (!IsValidAttribute(attributeName, knownAttributes, tagMap))
                         errors.Add($"Unknown attribute '{attributeName}' for tag '{tagName}'{GetLocationSuffix(attribute)}.");
                 }
             }
@@ -178,6 +186,28 @@ namespace A2V10.McpServer.Tools.Xaml
             }
 
             return false;
+        }
+
+        private static bool IsValidAttribute(string attributeName, HashSet<string> knownAttributes, Dictionary<string, XamlTagInfo> tagMap)
+        {
+            if (knownAttributes.Contains(attributeName))
+                return true;
+
+            var separatorIndex = attributeName.IndexOf('.');
+            if (separatorIndex <= 0 || separatorIndex >= attributeName.Length - 1)
+                return false;
+
+            var ownerTagName = attributeName[..separatorIndex];
+            var ownerAttributeName = attributeName[(separatorIndex + 1)..];
+
+            if (AttachedAttributes.TryGetValue(ownerTagName, out var attachedAttributes) && attachedAttributes.Contains(ownerAttributeName))
+                return true;
+
+            if (!IsValidTag(ownerTagName, tagMap, out var ownerTagInfo) || ownerTagInfo == null)
+                return false;
+
+            var ownerAttributes = new HashSet<string>(ownerTagInfo.Attributes ?? Array.Empty<string>(), StringComparer.OrdinalIgnoreCase);
+            return ownerAttributes.Contains(ownerAttributeName);
         }
 
         private static string GetLocationSuffix(XObject node)
