@@ -2,7 +2,7 @@
   "ConnectionStrings": {
     "Default": "Server=localhost;Database=MyDatabase;Integrated Security=true;TrustServerCertificate=true;"
   },
-  "Logging": {
+  "Logging": { 
     "LogLevel": {
       "Default": "Information",
       "Microsoft.Hosting.Lifetime": "Information"

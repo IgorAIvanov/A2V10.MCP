@@ -1,1 +1,1 @@
-npx -y @modelcontextprotocol/inspector "C:\AI\A2V10.MCP\bin\Debug\net10.0\A2V10.MCP.exe"
+npx -y @modelcontextprotocol/inspector "C:\AI\A2V10.MCP\bin\Debug\net10.0\A2V10.MCP.exe" 
