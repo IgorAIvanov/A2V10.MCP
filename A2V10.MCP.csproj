@@ -7,11 +7,10 @@
     <Nullable>enable</Nullable>
 
     <!-- Информация об авторстве -->
-    <Authors>Ваше имя или команда</Authors>
-    <Company>Название компании</Company>
+    <Authors>Igor Ivanov</Authors>
     <Product>A2V10.MCP</Product>
     <Description>Model Context Protocol server для A2V10</Description>
-    <Copyright>Copyright © 2025</Copyright>
+    <Copyright>Copyright © 2026 Igor Ivanov</Copyright>
     <Version>1.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
@@ -20,6 +19,7 @@
     <RepositoryUrl>https://github.com/IgorAIvanov/A2V10.MCP</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/IgorAIvanov/A2V10.MCP</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
