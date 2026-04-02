@@ -46,8 +46,6 @@ MCP Server for A2V10 platform providing database and XAML tools.
 ```
 A2V10.MCP/
 ├── Program.cs                          # Application entry point
-├── Services/
-│   └── DatabaseInitializationService.cs # Auto-connects to database on startup
 ├── Tools/
 │   ├── DBTools/                        # Database-related tools
 │   │   ├── ExecuteSQL.cs               # SQL execution tool
