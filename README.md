@@ -34,7 +34,7 @@ MCP Server for A2V10 platform providing database and XAML tools.
    If needed, you can run MCP in read-only mode:
 
    ```bash
-   dotnet run -- --readOnly true
+   dotnet run --readOnly true
    ```
 
 3. **Test with MCP Inspector**
@@ -87,7 +87,8 @@ A2V10.MCP/
 │   ├── Xaml/                           # XAML-related tools
 │   └── Helpers/
 │       └── ConfigHelper.cs             # Configuration file helper
-└── docs/                               # Documentation
+
+Publish/                                #Precompiled MCP for distribution    
 ```
 
 ## How It Works
