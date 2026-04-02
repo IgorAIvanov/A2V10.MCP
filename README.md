@@ -31,11 +31,43 @@ MCP Server for A2V10 platform providing database and XAML tools.
    dotnet run
    ```
 
+   If needed, you can run MCP in read-only mode:
+
+   ```bash
+   dotnet run -- --readOnly true
+   ```
+
 3. **Test with MCP Inspector**
 
    ```bash
-   npx -y @modelcontextprotocol/inspector "C:\AI\A2V10.MCP\bin\Debug\net10.0\A2V10.MCP.exe"
+   npx -y @modelcontextprotocol/inspector "path\ToMCP\A2V10.MCP\bin\Debug\net10.0\A2V10.MCP.exe"
    ```
+
+## Run Published MCP
+
+To use MCP, you can clone the repository and build the project yourself, or use the precompiled version from the `publish` directory.
+
+1. Copy all files from the `publish` directory to a separate folder, for example `C:\Tools\A2V10.MCP`.
+2. Configure your agent to launch MCP from that folder. You can also pass the `--readOnly` argument when starting it.
+
+Example agent configuration:
+
+```json
+{
+  "command": "C:\\Tools\\A2V10.MCP\\A2V10.MCP.exe",
+  "args": ["--readOnly", "true"]
+}
+```
+
+If you want to build the project yourself, run:
+
+```bash
+dotnet build
+```
+
+After the build, you can use the executable from `bin\Debug\net10.0`, or publish the project and copy all files from `publish` to a separate folder in the same way for use with your agent.
+
+If the `--readOnly` argument is not specified, the default value is `true`.
 
 ## Documentation
 
@@ -75,4 +107,4 @@ When the server starts:
 
 ## License
 
-[Add your license information here]
+MIT
